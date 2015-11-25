@@ -1,43 +1,41 @@
-import gzip
 import numpy as np
+import pickle
 from sklearn import svm
-from sklearn.linear_model import Ridge
-import numpy
-from collections import defaultdict
-import random
-from random import randint
-#{"gctype", "community", "month", "date", "is_night", "council", 
-#"year", "id", "city", "asr_zone", "lon", "comm_pop", "type", "week",
-#"gcquality", "address", "lat", "coun_pop", "day", "desc", "hour",
-#"segment_id", "time", "lampdist", "nbrhood", "dow": "5"}
+
 types = ["DRUGS/ALCOHOL VIOLATIONS", "THEFT/LARCENY", \
     "VEHICLE BREAK-IN/THEFT", "MOTOR VEHICLE THEFT", "BURGLARY", "VANDALISM", \
     "ASSAULT", "DUI", "FRAUD", "ROBBERY", "SEX CRIMES", "WEAPONS", "ARSON", \
     "HOMICIDE"]
-
-total = []
-with open('incidents-100k.json', 'r') as f:
-    for line in f:
-        total.append(eval(line))
+# types = {crime:index for index,crime in enumerate(types)}
+types = {}
+three = ['ASSAULT', 'SEX CRIMES', 'HOMICIDE']
+two = ['THEFT/LARCENY', 'VEHICLE BREAK-IN/THEFT', 'MOTOR VEHICLE THEFT', \
+            'BURGLARY', 'VANDALISM', 'FRAUD', 'ROBBERY', 'ARSON']
+one = ['DRUGS/ALCOHOL VIOLATIONS', 'DUI', 'WEAPONS']
+for crime in three:
+    types[crime] = 2
+for crime in two:
+    types[crime] = 1
+for crime in one:
+    types[crime] = 0
+# total = []
+# with open('incidents-100k.json', 'r') as f:
+#     for line in f:
+#         total.append(eval(line))
+total = pickle.load(open("incidents_train.pkl"))
 
 training = total[:50000]
 test = total[50000:]
 print "Parsed Input File"
 
-X_d = [[\
-    float(entry['lat']), \
-    float(entry['lon']), \
+X_d = [[entry['lat'], entry['lon'], entry['asr_zone']] \
     #0 if (int(entry['dow']) == 0 or int(entry['dow']) == 6) else 1,\
-    int(entry['asr_zone'])] \
-    for entry in training if entry['is_night'] == "0" and float(entry['lat']) != 0.0]
-y_d = [int(types.index(entry['type'])) for entry in training if entry['is_night'] == "0" and float(entry['lat']) != 0.0]
+        for entry in training if entry['is_night'] == 0 and entry['lat'] != 0.0]
+y_d = [types[entry['type']] for entry in training if entry['is_night'] == 0 and entry['lat'] != 0.0]
 
-X_n = [[\
-    float(entry['lat']), \
-    float(entry['lon']), \
-    int(entry['asr_zone'])]
-    for entry in training if entry['is_night'] == "1" and float(entry['lat']) != 0.0]
-y_n = [types.index(entry['type']) for entry in training if entry['is_night'] == "1" and float(entry['lat']) != 0.0]
+X_n = [[entry['lat'], entry['lon'], entry['asr_zone']] \
+        for entry in training if entry['is_night'] == 1 and entry['lat'] != 0.0]
+y_n = [types[entry['type']] for entry in training if entry['is_night'] == 1 and entry['lat'] != 0.0]
 
 print "Built Training and Test set"
 
@@ -51,9 +49,11 @@ clf_n.fit(X_n, y_n)
 
 print "Created the model"
 
-points = np.array([[float(entry['lat']), float(entry['lon']), int(entry['asr_zone']), \
-                    int(entry['is_night']), types.index(entry['type'])] for \
-            entry in test])
+points = np.array([[entry['lat'], entry['lon'], entry['asr_zone'], entry['is_night'],
+                types[entry['type']]] for entry in test])
+# points = np.array([[float(entry['lat']), float(entry['lon']), int(entry['asr_zone']), \
+#                     int(entry['is_night']), types.index(entry['type'])] for \
+#             entry in test])
 # [lat, lon, asr, night]
 days = points[(points[:,-2] != 0)][:,0:-2]
 days_actual = points[(points[:,-1] != 0)][:,-1]
@@ -66,7 +66,7 @@ night_predicts = clf_d.predict(nights)
 predicts = np.concatenate((day_predicts,night_predicts))
 actuals = np.concatenate((days_actual,nights_actual))
 hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
-print "Hamming loss: ", 1 - hamming
+print "Hamming loss: ", hamming
 # diffsTest = []
 # for i in range(0, len(test)):
 #     print i

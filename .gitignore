@@ -1,2 +1,9 @@
 incidents*.csv
 sample
+*.pkl
+*.json
+*.csv
+*.shp
+*.shx
+*.dbf
+*.prj
