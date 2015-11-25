@@ -1,4 +1,5 @@
 import gzip
+import numpy as np
 from sklearn import svm
 from sklearn.linear_model import Ridge
 import numpy
@@ -15,10 +16,6 @@ types = ["DRUGS/ALCOHOL VIOLATIONS", "THEFT/LARCENY", \
     "HOMICIDE"]
 
 total = []
-training = []
-test = []
-X = []
-y = []
 with open('incidents-100k.json', 'r') as f:
     for line in f:
         total.append(eval(line))
@@ -45,37 +42,53 @@ y_n = [types.index(entry['type']) for entry in training if entry['is_night'] == 
 print "Built Training and Test set"
 
 clf_d = svm.SVC() #set C=100
-clf_d.decision_function_shape = "ovr"
+clf_d.decision_function_shape='ovr'
 clf_d.fit(X_d, y_d)
 
-clf_n = svm.SVC() #set C=100
-clf_n.decision_function_shape = "ovr"
+clf_n = svm.SVC()
+clf_n.decision_function_shape='ovr'
 clf_n.fit(X_n, y_n)
 
 print "Created the model"
 
-diffsTest = []
-for i in range(0, len(test)):
-    print i
-    entry = test[i]
-    predict_test_y = 0
-    if entry['is_night'] == "0":
-        predict_test_y = clf_d.predict([\
-            float(entry['lat']), \
-            float(entry['lon']), \
-            #0 if (int(entry['dow']) == 0 or int(entry['dow']) == 6) else 1,\
-            int(entry['asr_zone']) \
-            ])
-    else:
-        predict_test_y = clf_n.predict([\
-            float(entry['lat']), \
-            float(entry['lon']), \
-            int(entry['asr_zone'])
-            ])
+points = np.array([[float(entry['lat']), float(entry['lon']), int(entry['asr_zone']), \
+                    int(entry['is_night']), types.index(entry['type'])] for \
+            entry in test])
+# [lat, lon, asr, night]
+days = points[(points[:,-2] != 0)][:,0:-2]
+days_actual = points[(points[:,-1] != 0)][:,-1]
+nights = points[(points[:,-2] == 0)][:,0:-2]
+nights_actual = points[(points[:,-1] == 0)][:,-1]
 
-    if (predict_test_y == types.index(entry['type'])):
-        diffsTest.append(1)
-    else:
-        diffsTest.append(0)
+day_predicts = clf_d.predict(days)
+night_predicts = clf_d.predict(nights)
 
-print "Accuracy: ", sum(diffsTest)/float(len(diffsTest))
+predicts = np.concatenate((day_predicts,night_predicts))
+actuals = np.concatenate((days_actual,nights_actual))
+hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
+print "Hamming loss: ", 1 - hamming
+# diffsTest = []
+# for i in range(0, len(test)):
+#     print i
+#     entry = test[i]
+#     predict_test_y = 0
+#     if entry['is_night'] == "0":
+#         predict_test_y = clf_d.predict([\
+#             float(entry['lat']), \
+#             float(entry['lon']), \
+#             #0 if (int(entry['dow']) == 0 or int(entry['dow']) == 6) else 1,\
+#             int(entry['asr_zone']) \
+#             ])
+#     else:
+#         predict_test_y = clf_n.predict([\
+#             float(entry['lat']), \
+#             float(entry['lon']), \
+#             int(entry['asr_zone'])
+#             ])
+
+#     if (predict_test_y == types.index(entry['type'])):
+#         diffsTest.append(1)
+#     else:
+#         diffsTest.append(0)
+
+# print "Accuracy: ", sum(diffsTest)/float(len(diffsTest))
