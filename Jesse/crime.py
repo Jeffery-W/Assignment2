@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 from sklearn import svm
+from sklearn.metrics import classification_report, hamming_loss
 
 types = ["DRUGS/ALCOHOL VIOLATIONS", "THEFT/LARCENY", \
     "VEHICLE BREAK-IN/THEFT", "MOTOR VEHICLE THEFT", "BURGLARY", "VANDALISM", \
@@ -23,9 +24,29 @@ for crime in one:
 #     for line in f:
 #         total.append(eval(line))
 total = pickle.load(open("incidents_train.pkl"))
+one_count,two_count,three_count = 0,0,0
+training = []
+i = len(total)-1
+while len(training) < 30000:
+    print i
+    line = total[i]
+    if line['type'] in three and three_count < 10000:
+        three_count += 1
+        training.append(line)
+        total.pop(i)
+    elif line['type'] in two and two_count < 10000:
+        two_count += 1
+        training.append(line)
+        total.pop(i)
+    elif line['type'] in one and one_count < 10000:
+        one_count += 1
+        training.append(line)
+        total.pop(i)
+    i -= 1
 
-training = total[:50000]
-test = total[50000:]
+test = total
+# training = total[:50000]
+# test = total[50000:]
 print "Parsed Input File"
 
 X_d = [[entry['lat'], entry['lon'], entry['asr_zone']] \
@@ -65,8 +86,12 @@ night_predicts = clf_d.predict(nights)
 
 predicts = np.concatenate((day_predicts,night_predicts))
 actuals = np.concatenate((days_actual,nights_actual))
-hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
-print "Hamming loss: ", hamming
+# hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
+hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/3).sum()/len(predicts)
+# print "Hamming loss: ", hamming
+actuals = actuals.astype(np.int64)
+print classification_report(actuals, predicts)
+
 # diffsTest = []
 # for i in range(0, len(test)):
 #     print i
