@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 from sklearn import svm
+from sklearn.metrics import classification_report, hamming_loss
 
 types = ["DRUGS/ALCOHOL VIOLATIONS", "THEFT/LARCENY", \
     "VEHICLE BREAK-IN/THEFT", "MOTOR VEHICLE THEFT", "BURGLARY", "VANDALISM", \
@@ -22,20 +23,21 @@ for crime in one:
 # with open('incidents-100k.json', 'r') as f:
 #     for line in f:
 #         total.append(eval(line))
-total = pickle.load(open("incidents_train.pkl"))
 
-training = total[:50000]
-test = total[50000:]
+
+training = pickle.load(open("incidents_balanced_train.pkl"))
+test = pickle.load(open("incidents_balanced_test.pkl"))
+# training = total[:50000]
+# test = total[50000:]
 print "Parsed Input File"
 
 X_d = [[entry['lat'], entry['lon'], entry['asr_zone']] \
-    #0 if (int(entry['dow']) == 0 or int(entry['dow']) == 6) else 1,\
-        for entry in training if entry['is_night'] == 0 and entry['lat'] != 0.0]
-y_d = [types[entry['type']] for entry in training if entry['is_night'] == 0 and entry['lat'] != 0.0]
+        for entry in training if entry['is_night'] == 0]
+y_d = [types[entry['type']] for entry in training if entry['is_night'] == 0]
 
 X_n = [[entry['lat'], entry['lon'], entry['asr_zone']] \
-        for entry in training if entry['is_night'] == 1 and entry['lat'] != 0.0]
-y_n = [types[entry['type']] for entry in training if entry['is_night'] == 1 and entry['lat'] != 0.0]
+        for entry in training if entry['is_night'] == 1]
+y_n = [types[entry['type']] for entry in training if entry['is_night'] == 1]
 
 print "Built Training and Test set"
 
@@ -65,8 +67,13 @@ night_predicts = clf_d.predict(nights)
 
 predicts = np.concatenate((day_predicts,night_predicts))
 actuals = np.concatenate((days_actual,nights_actual))
-hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
-print "Hamming loss: ", hamming
+# hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
+hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/3).sum()/len(predicts)
+# print "Hamming loss: ", hamming
+actuals = actuals.astype(np.int64)
+print classification_report(actuals, predicts)
+print hamming_loss(actuals, predicts)
+print hamming
 # diffsTest = []
 # for i in range(0, len(test)):
 #     print i

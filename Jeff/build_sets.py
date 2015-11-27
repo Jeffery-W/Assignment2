@@ -35,7 +35,7 @@ for line in nights:
 print label_counts
 
 def check_valid(crime):
-    return line['asr_zone'] != '' and line['lat'] != 0.0
+    return crime['asr_zone'] != '' and crime['lat'] != 0.0
 
 # goal is to build balanced day, night for train,test
 # so day -> 45k, night -> 45k
@@ -45,17 +45,18 @@ def build_dataset(dataset):
     train = []
     old_length = len(dataset)
     i = len(dataset)-1
-    while len(train) < 45000:
+    while len(train) < 24000:
+        # print i
         line = dataset[i]
-        if line['type'] in three and three_count < 15000 and check_valid(line):
+        if line['type'] in three and three_count < 8000 and check_valid(line):
             three_count += 1
             train.append(line)
             dataset.pop(i)
-        elif line['type'] in two and two_count < 15000 and check_valid(line):
+        elif line['type'] in two and two_count < 8000 and check_valid(line):
             two_count += 1
             train.append(line)
             dataset.pop(i)
-        elif line['type'] in one and one_count < 15000 and check_valid(line):
+        elif line['type'] in one and one_count < 8000 and check_valid(line):
             one_count += 1
             train.append(line)
             dataset.pop(i)

@@ -60,11 +60,11 @@ y_n = [types[entry['type']] for entry in training if entry['is_night'] == 1 and 
 
 print "Built Training and Test set"
 
-clf_d = svm.SVC() #set C=100
+clf_d = svm.SVC(class_weight='balanced') #set C=100
 clf_d.decision_function_shape='ovr'
 clf_d.fit(X_d, y_d)
 
-clf_n = svm.SVC()
+clf_n = svm.SVC(class_weight='balanced')
 clf_n.decision_function_shape='ovr'
 clf_n.fit(X_n, y_n)
 
