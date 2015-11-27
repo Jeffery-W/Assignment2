@@ -77,65 +77,22 @@ print "Building test set from night data..."
 test_nights = build_dataset(nights)
 print "Done."
 
-# print "Building train set..."
-# one_count,two_count,three_count = 0,0,0
-# train = []
-# old_length = len(full_train)
-# i = len(full_train)-1
-# while len(train) < 90000:
-#     line = full_train[i]
-#     if line['type'] in three and three_count < 30000 and check_valid(line):
-#         three_count += 1
-#         train.append(line)
-#         full_train.pop(i)
-#     elif line['type'] in two and two_count < 30000 and check_valid(line):
-#         two_count += 1
-#         train.append(line)
-#         full_train.pop(i)
-#     elif line['type'] in one and one_count < 30000 and check_valid(line):
-#         one_count += 1
-#         train.append(line)
-#         full_train.pop(i)
-#     i -= 1
-# print old_length, len(full_train)
-# print "Done."
+train = train_days + train_nights
+test = test_days + test_nights
 
-# # print "Building test set..."
-# # one_count,two_count,three_count = 0,0,0
-# # test = []
-# # old_length = len(full_train)
-# # i = len(full_train)-1
-# # while len(test) < 90000:
-# #     line = full_train[i]
-# #     if line['type'] in three and three_count < 30000 and check_valid(line):
-# #         three_count += 1
-# #         test.append(line)
-# #         full_train.pop(i)
-# #     elif line['type'] in two and two_count < 30000 and check_valid(line):
-# #         two_count += 1
-# #         test.append(line)
-# #         full_train.pop(i)
-# #     elif line['type'] in one and one_count < 30000 and check_valid(line):
-# #         one_count += 1
-# #         test.append(line)
-# #         full_train.pop(i)
-# #     i -= 1
-# # print old_length, len(full_train)
-# # print "Done."
+print "Shuffling..."
+random.seed(0)
+random.shuffle(train)
+random.shuffle(test)
+print "Done."
 
-# # print "Shuffling..."
-# # random.seed(0)
-# # random.shuffle(train)
-# # random.shuffle(test)
-# # print "Done."
+print "Pickling data..."
+f = open("incidents_balanced_train.pkl", 'w')
+pickle.dump(train, f, 2)
+f.close()
 
-# # print "Pickling data..."
-# # f = open("incidents_balanced_train.pkl", 'w')
-# # pickle.dump(train, f, 2)
-# # f.close()
-
-# # f = open("incidents_balanced_test.pkl", 'w')
-# # pickle.dump(test, f, 2)
-# # f.close()
-# # print "Done."
+f = open("incidents_balanced_test.pkl", 'w')
+pickle.dump(test, f, 2)
+f.close()
+print "Done."
 
