@@ -1,0 +1,126 @@
+Reading data...
+Done.
+Full set size:  797978
+Data fields:  week, community, month, date, is_night, council, year, id, city, asr_zone, lon, comm_pop, type, gctype, gcquality, address, lat, coun_pop, day, desc, hour, segment_id, time, lampdist, nbrhood, dow
+Statistics on full set of crimes:  Number of day crimes:  428258
+Percentage:  53.6678956061
+Number of night crimes:  369720
+Percentage:  46.3321043939
+Number of crimes per offense category: 
+HOMICIDE:  368
+DUI:  47098
+DRUGS/ALCOHOL VIOLATIONS:  185135
+FRAUD:  43955
+ROBBERY:  17002
+ARSON:  1651
+MOTOR VEHICLE THEFT:  70066
+WEAPONS:  8838
+ASSAULT:  69055
+VANDALISM:  61439
+VEHICLE BREAK-IN/THEFT:  95616
+BURGLARY:  71377
+THEFT/LARCENY:  108939
+SEX CRIMES:  17439
+Total crimes:  797978
+Number of crimes per crime type: 
+Personal crime:  86862
+Percentage:  10.885262501
+Property crime:  470045
+Percentage:  58.9045061393
+Statutory crime:  241071
+Percentage:  30.2102313598
+Number of crimes with invalid coordinates:  70367
+Percentage:  8.81816290675
+Number of crimes with missing ASR zone:  435905
+Percentage:  54.6261927021
+Number of crimes with missing neighborhood:  436409
+Percentage:  54.689352338
+Number of crimes with missing community:  436526
+Percentage:  54.7040143964
+Number of crimes with invalid populations:  436541
+Percentage:  54.7058941475
+Number of crimes with invalid council populations:  435962
+Percentage:  54.6333357561
+Number of crimes with invalid lamp distances:  435905
+Percentage:  54.6261927021
+Number of crimes with clean data:  360964
+Percentage:  100.0
+Statistics on valid crimes: 
+Day range:  2922 - 4748
+Week range:  0 - 53
+Month range:  1 - 12
+Year range:  2008 - 2012
+Longitude range:  -117.281367428 - -116.906159101
+Latitude range:  32.5414967546 - 33.1015270648
+Lamp distance range:  0 - 12000
+Number of day crimes:  190358
+Percentage:  52.7360069148
+Number of night crimes:  170606
+Percentage:  47.2639930852
+Number of crimes per offense category: 
+HOMICIDE:  184
+DUI:  18549
+DRUGS/ALCOHOL VIOLATIONS:  85085
+FRAUD:  19624
+ROBBERY:  8238
+ARSON:  790
+MOTOR VEHICLE THEFT:  35442
+WEAPONS:  3688
+ASSAULT:  29604
+VANDALISM:  27410
+VEHICLE BREAK-IN/THEFT:  43955
+BURGLARY:  31975
+THEFT/LARCENY:  48583
+SEX CRIMES:  7837
+Total crimes:  360964
+Number of crimes per crime type: 
+Personal crime:  37625
+Percentage:  10.4234771335
+Property crime:  216017
+Percentage:  59.8444720249
+Statutory crime:  107322
+Percentage:  29.7320508416
+Number of day/night crimes per crime type: 
+Personal crime, day:  18383
+Personal crime, night:  19242
+Property crime, day:  122494
+Property crime, night:  93523
+Statutory crime, day:  49481
+Statutory crime, night:  57841
+Number of crimes per day of week: 
+Sunday:  49888
+Monday:  47569
+Tuesday:  48563
+Wednesday:  49021
+Thursday:  50416
+Friday:  58545
+Saturday:  56962
+Number of crimes per day by type:
+Sunday: 
+Personal crime:  6067
+Property crime:  27239
+Statutory crime:  16582
+Monday: 
+Personal crime:  4613
+Property crime:  30392
+Statutory crime:  12564
+Tuesday: 
+Personal crime:  4957
+Property crime:  30421
+Statutory crime:  13185
+Wednesday: 
+Personal crime:  5005
+Property crime:  30705
+Statutory crime:  13311
+Thursday: 
+Personal crime:  5201
+Property crime:  30500
+Statutory crime:  14715
+Friday: 
+Personal crime:  5527
+Property crime:  35547
+Statutory crime:  17471
+Saturday: 
+Personal crime:  6255
+Property crime:  31213
+Statutory crime:  19494

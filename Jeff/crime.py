@@ -31,49 +31,67 @@ test = pickle.load(open("incidents_balanced_test.pkl"))
 # test = total[50000:]
 print "Parsed Input File"
 
-X_d = [[entry['lat'], entry['lon'], entry['asr_zone']] \
-        for entry in training if entry['is_night'] == 0]
-y_d = [types[entry['type']] for entry in training if entry['is_night'] == 0]
+cities = set([line['nbrhood'] for line in training])
+for line in test:
+    if line['nbrhood'] not in cities:
+        cities.add(line['nbrhood'])
+cities = {city:index for index,city in enumerate(list(cities))}
 
-X_n = [[entry['lat'], entry['lon'], entry['asr_zone']] \
-        for entry in training if entry['is_night'] == 1]
-y_n = [types[entry['type']] for entry in training if entry['is_night'] == 1]
+# X_d = [[entry['lat'], entry['lon'], entry['asr_zone']] \
+#         for entry in training if entry['is_night'] == 0]
+# y_d = [types[entry['type']] for entry in training if entry['is_night'] == 0]
 
-print "Built Training and Test set"
+# X_n = [[entry['lat'], entry['lon'], entry['asr_zone']] \
+#         for entry in training if entry['is_night'] == 1]
+# y_n = [types[entry['type']] for entry in training if entry['is_night'] == 1]
 
-clf_d = svm.SVC() #set C=100
-clf_d.decision_function_shape='ovr'
-clf_d.fit(X_d, y_d)
+# print "Built Training and Test set"
 
-clf_n = svm.SVC()
-clf_n.decision_function_shape='ovr'
-clf_n.fit(X_n, y_n)
+# clf_d = svm.SVC() #set C=100
+# clf_d.decision_function_shape='ovr'
+# clf_d.fit(X_d, y_d)
+
+# clf_n = svm.SVC()
+# clf_n.decision_function_shape='ovr'
+# clf_n.fit(X_n, y_n)
+
+X = [[entry['lat'], entry['lon'], entry['asr_zone'], entry['is_night'], cities[entry['nbrhood']], entry['comm_pop'], entry['lampdist']] for \
+        entry in training]
+y = [types[entry['type']] for entry in training]
+clf = svm.SVC(C=1.5)
+clf.decision_function_shape = 'ovr'
+clf.fit(X, y)
 
 print "Created the model"
 
-points = np.array([[entry['lat'], entry['lon'], entry['asr_zone'], entry['is_night'],
-                types[entry['type']]] for entry in test])
+# points = np.array([[entry['lat'], entry['lon'], entry['asr_zone'], entry['is_night'],
+#                 types[entry['type']]] for entry in test])
 # points = np.array([[float(entry['lat']), float(entry['lon']), int(entry['asr_zone']), \
 #                     int(entry['is_night']), types.index(entry['type'])] for \
 #             entry in test])
 # [lat, lon, asr, night]
-days = points[(points[:,-2] != 0)][:,0:-2]
-days_actual = points[(points[:,-1] != 0)][:,-1]
-nights = points[(points[:,-2] == 0)][:,0:-2]
-nights_actual = points[(points[:,-1] == 0)][:,-1]
+# days = points[(points[:,-2] != 0)][:,0:-2]
+# days_actual = points[(points[:,-1] != 0)][:,-1]
+# nights = points[(points[:,-2] == 0)][:,0:-2]
+# nights_actual = points[(points[:,-1] == 0)][:,-1]
 
-day_predicts = clf_d.predict(days)
-night_predicts = clf_d.predict(nights)
+# day_predicts = clf_d.predict(days)
+# night_predicts = clf_d.predict(nights)
 
-predicts = np.concatenate((day_predicts,night_predicts))
-actuals = np.concatenate((days_actual,nights_actual))
-# hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
-hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/3).sum()/len(predicts)
-# print "Hamming loss: ", hamming
-actuals = actuals.astype(np.int64)
+# predicts = np.concatenate((day_predicts,night_predicts))
+# actuals = np.concatenate((days_actual,nights_actual))
+points = [[entry['lat'], entry['lon'], entry['asr_zone'], entry['is_night'], cities[entry['nbrhood']], entry['comm_pop'], entry['lampdist']] for \
+            entry in test]
+predicts = clf.predict(points)
+actuals = [types[entry['type']] for entry in test]
+
+# # hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/len(types)).sum()/len(predicts)
+# hamming = ((predicts^(actuals.astype(np.int64))).astype(np.float64)/3).sum()/len(predicts)
+# # print "Hamming loss: ", hamming
+# actuals = actuals.astype(np.int64)
 print classification_report(actuals, predicts)
-print hamming_loss(actuals, predicts)
-print hamming
+print 1 - hamming_loss(actuals, predicts)
+# print hamming
 # diffsTest = []
 # for i in range(0, len(test)):
 #     print i

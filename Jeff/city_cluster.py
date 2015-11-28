@@ -25,4 +25,4 @@ color_sequence = [colors[line['type']] for line in full_train if line['lon'] != 
 magnitudes = [3 if color == '#FFA500' else (5 if color == '#8B0000' else 2) for color in color_sequence]
 assert len(x) == len(y) == len(color_sequence) == len(magnitudes)
 
-clf = KMeans(n_clusters=10, n_jobs=4, 
+# clf = KMeans(n_clusters=10, n_jobs=4, 
