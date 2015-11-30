@@ -67,9 +67,9 @@ san_diego.scatter(three_x, three_y, marker='o', latlon=False, zorder=5,
 print len(one_x), len(two_x), len(three_x)
 print "Done."
 plt.title('Severity of crimes')
-red = mpatches.Patch(color='#8B0000', label='Very severe')
-orange = mpatches.Patch(color='#FFA500', label='Severe')
-yellow = mpatches.Patch(color='#FFFF00', label='Moderate')
+red = mpatches.Patch(color='#8B0000', label='Personal crimes')
+orange = mpatches.Patch(color='#FFA500', label='Property crimes')
+yellow = mpatches.Patch(color='#FFFF00', label='Statutory crimes')
 plt.legend(handles=[red, orange, yellow], title='Legend', ncol=1, loc=1)
 # san_diego.plot(converted_x, converted_y, 'ro', alpha=0.01, markersize=3, markeredgecolor='red')
 plt.show()

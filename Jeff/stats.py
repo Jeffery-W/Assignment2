@@ -1,6 +1,5 @@
 import numpy as np
 import pickle
-import matplotlib.pyplot as plt
 from collections import defaultdict
 
 types = {}
@@ -160,4 +159,10 @@ for day in range(7):
     print "Personal crime: ", dow_severities[day][2]
     print "Property crime: ", dow_severities[day][1]
     print "Statutory crime: ", dow_severities[day][0]
+
+f = open("valid_crimes.pkl", 'w')
+pickle.dump(valid_crimes, f, 2)
+f.close()
+
+
 

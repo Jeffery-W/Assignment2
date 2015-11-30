@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report, hamming_loss
 
 types = ["DRUGS/ALCOHOL VIOLATIONS", "THEFT/LARCENY", \
@@ -58,8 +59,9 @@ cities = {city:index for index,city in enumerate(list(cities))}
 X = [[entry['lat'], entry['lon'], entry['asr_zone'], entry['is_night'], cities[entry['nbrhood']], entry['comm_pop'], entry['lampdist']] for \
         entry in training]
 y = [types[entry['type']] for entry in training]
-clf = svm.SVC(C=1.5)
-clf.decision_function_shape = 'ovr'
+# clf = svm.SVC(C=1.5)
+# clf.decision_function_shape = 'ovr'
+clf = KNeighborsClassifier(n_neighbors=200, n_jobs=4, algorithm='kd_tree', weights='distance')
 clf.fit(X, y)
 
 print "Created the model"
@@ -91,6 +93,24 @@ actuals = [types[entry['type']] for entry in test]
 # actuals = actuals.astype(np.int64)
 print classification_report(actuals, predicts)
 print 1 - hamming_loss(actuals, predicts)
+
+# f = open("train_features.pkl", 'w')
+# pickle.dump(X, f, 2)
+# f.close()
+
+# f = open("train_labels.pkl", 'w')
+# pickle.dump(y, f, 2)
+# f.close()
+
+# f = open("test_features.pkl", 'w')
+# pickle.dump(points, f, 2)
+# f.close()
+
+# f = open("test_labels.pkl", 'w')
+# pickle.dump(actuals, f, 2)
+# f.close()
+
+
 # print hamming
 # diffsTest = []
 # for i in range(0, len(test)):
